@@ -1,5 +1,5 @@
 #include "snake.h"
-////////////////////////////////////////
+
 Snake::Body::Body(size_t snake_matrix_size) : length(4), snake_matrix_size(snake_matrix_size){
     position = std::vector<std::vector<int>>(snake_matrix_size);
     for(int i = 0; i < snake_matrix_size; i++){
@@ -22,8 +22,8 @@ void Snake::initialize() {
     body.current_direction = body.prev_direction = Direction::DIR_RIGHT;
     this->body.length = 4;
     for (int i = 0; i < _size; i++){
-        this->body.position[i][X_] = 0;
-        this->body.position[i][Y_] = 0;
+        set_position(i, X_, 0);
+        set_position(i, Y_, 0);
     }
     new_food_position();
 }
@@ -38,7 +38,7 @@ void Snake::new_food_position() {
 //// there must be mistake
 bool Snake::is_food_inside() {
     for(int i = 0; i < body.length; i++){
-        if (food.y == body.position[i][Y_] && food.x == body.position[i][X_]){
+        if (food.y == get_position(i, Y_) && food.x == get_position(i, X_)){
             return true;
         }
     }
@@ -47,8 +47,8 @@ bool Snake::is_food_inside() {
 
 void Snake::step() {
     for(int i = body.length; i > 0; i-- ){
-        body.position[i][X_] = body.position[i - 1][X_];
-        body.position[i][Y_] = body.position[i - 1][Y_];
+        set_position(i, X_, get_position(i-1, X_));
+        set_position(i, Y_, get_position(i-1, Y_));
     }
 
     switch (body.current_direction) {
@@ -70,25 +70,25 @@ void Snake::step() {
     body.prev_direction = body.current_direction;
 /// сделать геттер на голову чтобы не писать что-то вроде body.position[___0____][Y_]++;
 /// оьбработка телепортации на краях
-    if (body.position[0][X_] == _width){
-        body.position[0][X_] = 0;
-    } else if (body.position[0][X_] == -1) {
-        body.position[0][X_] = _width - 1;
-    } else if (body.position[0][Y_] == _height){
-        body.position[0][Y_] = 0;
-    } else if (body.position[0][Y_] == -1){
-        body.position[0][Y_] = _height - 1;
+    if (get_position(HEAD_, X_) == _width){
+        set_position(HEAD_, X_, 0);
+    } else if (get_position(HEAD_, X_) == -1) {
+        set_position(HEAD_, X_, _width - 1);
+    } else if (get_position(HEAD_, Y_) == _height){
+        set_position(HEAD_, Y_, 0);
+    } else if (get_position(HEAD_, Y_) == -1){
+        set_position(HEAD_, Y_, _height - 1);
     }
     /// eating
-    if(food.x == body.position[0][X_] && food.y == body.position[0][Y_]){
+    if(food.x == get_position(HEAD_, X_) && food.y == get_position(HEAD_, Y_)){
         new_food_position();
         body.length++;
     }
 
     ///eating herself
     for(int i = 1; i < body.length; i++){
-        if (body.position[0][X_] == body.position[i][X_] && body.position[0][Y_] == body.position[i][Y_]){
-            initialize(); /// aka death TODO
+        if (get_position(HEAD_, X_) == get_position(i, X_) && get_position(HEAD_, Y_) == get_position(i, Y_)){
+            initialize();
         }
     }
 
@@ -105,3 +105,14 @@ void Snake::redirection(Direction dir) {
         body.current_direction = Direction::DIR_LEFT;
     }
 }
+
+int Snake::get_position(int part, int coordinate) {
+    return this->body.position[part][coordinate];
+}
+
+void Snake::set_position(int part, int coordinate, int value) {
+    this->body.position[part][coordinate] = value;
+}
+
+
+

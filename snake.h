@@ -12,8 +12,15 @@ enum class Direction {
     DIR_LEFT
 };
 
+class Food{
+public:
+    size_t x;
+    size_t y;
+};
+
 #define X_ 0
 #define Y_ 1
+#define HEAD_ 0
 
 class Snake{
 public:
@@ -23,12 +30,15 @@ public:
 
     void new_food_position();
 
-/// there was const in 17:01 3:00 while restricting
     bool is_food_inside();
 
     void step();
 
     void redirection(Direction dir);
+
+    int get_position(int part, int coordinate);
+
+    void set_position(int part, int coordinate, int value);
 
     size_t _size;
     size_t _width;
@@ -43,7 +53,7 @@ public:
         Direction prev_direction;
         size_t length;
         size_t snake_matrix_size;
-        /// position of every snake block
+        /// position of every snake_ block
         std::vector<std::vector<int>> position;
 
 
@@ -51,13 +61,6 @@ public:
 
     Body body;
 
-    class Food{
-    public:
-        size_t x;
-        size_t y;
-    };
     Food food;
-
-private:
 
 };

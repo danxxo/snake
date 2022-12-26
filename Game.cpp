@@ -2,7 +2,7 @@
 #include "Game.h"
 
 
-Game::Game(int size, int width, int height) : cell_size_(size), width_(width), height(height), snake(size, width, height),
+Game::Game(int size, int width, int height) : cell_size_(size), width_(width), height(height), snake_(size, width, height),
                                               snake1(size, width, height), is_paused(false), working(true)
 {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0){
@@ -26,17 +26,8 @@ Game::Game(int size, int width, int height) : cell_size_(size), width_(width), h
     if (m_renderer_ == NULL){
         throw std::runtime_error("window renderer is null");
     }
-    step_timer_ = SDL_AddTimer(100, this->sdl_timer_callback, nullptr);
+    step_timer_ = SDL_AddTimer(70, this->sdl_timer_callback, nullptr);
 }
-
-//Game::~Game() {
-//    std::cout << "delete game" << std::endl;
-//    SDL_DestroyRenderer(m_renderer_);
-//    SDL_DestroyWindow(m_window);
-//    m_window = nullptr;
-//    m_renderer_ = nullptr;
-//    SDL_Quit();
-//}
 
 int Game::HandleEvents() {
     SDL_Event e;
@@ -47,7 +38,7 @@ int Game::HandleEvents() {
                 return 0;
             }
             case SDL_USEREVENT: {
-                if (!is_paused) snake.step();
+                if (!is_paused) snake_.step();
                 break;
             }
             case SDL_KEYDOWN: {
@@ -60,23 +51,23 @@ int Game::HandleEvents() {
                         break;
                     }
                     case SDL_SCANCODE_R: {
-                        snake.initialize();
+                        snake_.initialize();
                         break;
                     }
                     case SDL_SCANCODE_RIGHT: {
-                        snake.redirection(Direction::DIR_RIGHT);
+                        snake_.redirection(Direction::DIR_RIGHT);
                         break;
                     }
                     case SDL_SCANCODE_LEFT: {
-                        snake.redirection(Direction::DIR_LEFT);
+                        snake_.redirection(Direction::DIR_LEFT);
                         break;
                     }
                     case SDL_SCANCODE_UP: {
-                        snake.redirection(Direction::DIR_UP);
+                        snake_.redirection(Direction::DIR_UP);
                         break;
                     }
                     case SDL_SCANCODE_DOWN: {
-                        snake.redirection(Direction::DIR_DOWN);
+                        snake_.redirection(Direction::DIR_DOWN);
                         break;
                     }
                     default: {
@@ -94,12 +85,13 @@ int Game::HandleEvents() {
 void Game::RenderLoop() {
     while (working){
         HandleEvents();
-        Render();
+        Render(snake_);
+        //Render(snake1);
         UpdateTitle();
     }
 }
 
-void Game::Render() {
+void Game::Render(Snake snake) {
     SDL_SetRenderDrawColor(m_renderer_, grid_background_.r, grid_background_.g, grid_background_.b, grid_background_.a);
     SDL_RenderClear(m_renderer_);
     SDL_SetRenderDrawColor(m_renderer_, line_color_.r, line_color_.g, line_color_.b, line_color_.a);
@@ -111,7 +103,7 @@ void Game::Render() {
         SDL_RenderDrawLine(m_renderer_, 0, y, window_width_, y);
     }
 
-    ///snake
+    ///snake_
     SDL_Rect r;
     r.w = r.h = cell_size_;
     SDL_SetRenderDrawColor(m_renderer_, 0,0,0,255);
@@ -137,7 +129,7 @@ void Game::Render() {
 }
 
 void Game::UpdateTitle() {
-    std::string title = "record: " + std::to_string(snake.body.length - 4);
+    std::string title = "record: " + std::to_string(snake_.body.length - 4);
     SDL_SetWindowTitle(m_window, title.c_str());
 }
 
@@ -150,4 +142,3 @@ void Game::escape() {
     m_renderer_ = nullptr;
     SDL_Quit();
 }
-
