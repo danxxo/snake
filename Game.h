@@ -15,15 +15,19 @@ private:
     bool is_paused;
     bool working;
 
-    SDL_Color grid_background_ = {0,22,22,255};
-    SDL_Color line_color_ = {0,100,50,255};
+    SDL_Color grid_background_ = {0,22,22,150};
+    SDL_Color line_color_ = {0,100,50,50};
+    SDL_Color food_color = {255, 165, 0, 255};
+    SDL_Color head_color = {255, 105, 80, 255};
+    SDL_Color body_color = {144, 238, 144, 255};
 
     Snake snake_;
-    Snake snake1;
     Food food;
 
 public:
     Game(int size, int width, int height);
+
+    void ChangeColor();
 
     int HandleEvents();
 
@@ -34,6 +38,8 @@ public:
     void UpdateTitle();
 
     void escape();
+
+
 
     static Uint32 sdl_timer_callback(Uint32 interval, void *payload){
         SDL_Event e;

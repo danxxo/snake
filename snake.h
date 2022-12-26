@@ -14,8 +14,14 @@ enum class Direction {
 
 class Food{
 public:
+    Food(const size_t width, const size_t height);
+
     size_t x;
     size_t y;
+    size_t _width;
+    size_t _height;
+
+    void new_food_position();
 };
 
 #define X_ 0

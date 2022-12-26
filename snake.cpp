@@ -13,7 +13,7 @@ position = a;
 }
 
 Snake::Snake(const size_t size, const size_t width, const size_t height) : _size(size),
-_width(width), _height(height), body(width*height){
+_width(width), _height(height), body(width*height), food(width, height){
 initialize();
 }
 
@@ -29,8 +29,7 @@ void Snake::initialize() {
 }
 
 void Snake::new_food_position() {
-        food.x = rand() % _width;
-        food.y = rand() % _height;
+        food.new_food_position();
         if (is_food_inside()){
             return;
         }
@@ -114,5 +113,15 @@ void Snake::set_position(int part, int coordinate, int value) {
     this->body.position[part][coordinate] = value;
 }
 
+///////////////////////////////////////
+
+void Food::new_food_position() {
+    this->x = rand() % _width;
+    this->y = rand() % _height;
+}
+
+Food::Food(const size_t width, const size_t height) : _width(width), _height(height) {
+
+}
 
 
